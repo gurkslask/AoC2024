@@ -20,12 +20,21 @@ func main() {
 	}
 	fmt.Println(left)
 	fmt.Println(right)
-	for len(left) >= 1 {
+	/*for len(left) >= 1 {
 		minleft, leftkey := common.MinInts(left)
 		minright, rightkey := common.MinInts(right)
 		result += common.IntAbs(minleft - minright)
 		left = common.RemoveFromSliceInt(left, leftkey)
 		right = common.RemoveFromSliceInt(right, rightkey)
+	}*/
+	for _, v := range left {
+		num := 0
+		for _, r := range right {
+			if r == v {
+				num += 1
+			}
+		}
+		result += v * num
 	}
 	fmt.Println(result)
 
