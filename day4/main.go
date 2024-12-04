@@ -8,8 +8,8 @@ import (
 
 func main() {
 	f := common.ReadFileSlice("day4", false)
-	fmt.Println(simple(f))
-	//adv(f)
+	//fmt.Println(simple(f))
+	fmt.Println(adv(f))
 
 }
 
@@ -81,8 +81,78 @@ func simple(data []string) int {
 func Debugprint(board [][]string, p pos) {
 	//fmt.Printf("pos: %v \n letter: %v\n", p, board[p.x][p.y])
 }
-func adv(data []string) {
-	fmt.Printf("%b", data)
+func adv(data []string) int {
+	rows := len(data)
+	cols := len(data[0])
+	m := make([][]string, rows)
+	row := 0
+	for rows > row {
+		col := 0
+		for cols > col {
+			m[row] = append(m[row], string(data[row][col]))
+			col += 1
+		}
+		row += 1
+	}
+	fmt.Println(m)
+	p := pos{0, 0, ""}
+	res := 0
+
+	for _, v := range data {
+		fmt.Println(v)
+	}
+
+	for row := 0; row < rows; row++ {
+		for col := 0; col < cols; col++ {
+			if m[row][col] == "A" {
+				p.x = row
+				p.y = col
+				ludr := make(map[string]int)
+				rudl := make(map[string]int)
+				if AcheckIfForward(m, p) || AcheckIfBackward(m, p) || AcheckIfDown(m, p) || AcheckIfUp(m, p) {
+				} else {
+					ludr[m[p.x+1][p.y+1]] += 1 //dr
+					rudl[m[p.x-1][p.y+1]] += 1 //ru
+					rudl[m[p.x+1][p.y-1]] += 1 //dl
+					ludr[m[p.x-1][p.y-1]] += 1 //lu
+				}
+				if rudl["S"] == 1 && rudl["M"] == 1 && ludr["S"] == 1 && ludr["M"] == 1 {
+					res += 1
+				}
+				//fmt.Println(mm)
+
+			}
+		}
+	}
+	return res
+}
+func AcheckIfForward(board [][]string, p pos) bool {
+	if p.y >= len(board[0])-1 {
+		return true
+	} else {
+		return false
+	}
+}
+func AcheckIfBackward(board [][]string, p pos) bool {
+	if p.y < 1 {
+		return true
+	} else {
+		return false
+	}
+}
+func AcheckIfDown(board [][]string, p pos) bool {
+	if p.x >= len(board)-1 {
+		return true
+	} else {
+		return false
+	}
+}
+func AcheckIfUp(board [][]string, p pos) bool {
+	if p.x < 1 {
+		return true
+	} else {
+		return false
+	}
 }
 
 type pos struct {
