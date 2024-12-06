@@ -221,3 +221,10 @@ func RemoveFromSliceInt(s []int, i int) []int {
 	s[i] = s[len(s)-1]
 	return s[:len(s)-1]
 }
+
+// Remove key i from slice but order is importnant
+func RemoveFromSliceOrder(s []int, index int) []int {
+	ret := make([]int, 0)
+	ret = append(ret, s[:index]...)
+	return append(ret, s[index+1:]...)
+}

@@ -10,8 +10,8 @@ type Marker struct {
 	letter string
 }
 type Pos struct {
-	row int
-	col int
+	Row int
+	Col int
 }
 
 func MakeMarker(row int, col int, letter string) Marker {
@@ -53,6 +53,11 @@ func (m *Marker) MoveMarkerDown(g Grid) error {
 		m.pos[0] += 1
 		return nil
 	}
+}
+func (m Marker) GetPos() Pos {
+
+	//return m.pos[0], m.pos[1]
+	return Pos{m.pos[0], m.pos[1]}
 }
 
 type Grid struct {
@@ -100,7 +105,7 @@ func (g Grid) CheckLeft(row int, col int) string {
 	}
 }
 func (g Grid) CheckRight(row int, col int) string {
-	if col == len(g.g[row][col]) {
+	if col == len(g.g)-1 {
 		return "ö"
 	} else {
 		return g.CheckLoc(row, col+1)
@@ -115,7 +120,7 @@ func (g Grid) CheckUp(row int, col int) string {
 	}
 }
 func (g Grid) CheckDown(row int, col int) string {
-	if col == len(g.g[row]) {
+	if row == len(g.g[0])-1 {
 		return "ö"
 	} else {
 		return g.CheckLoc(row+1, col)
