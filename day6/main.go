@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	f := common.ReadFileSlice("day6", true)
+	f := common.ReadFileSlice("day6", false)
 	//simple(f)
 	adv(f)
 
@@ -52,7 +52,7 @@ func adv(data []string) {
 		}
 
 		g.InitGrid()
-		g.Print()
+		// g.Print()
 		fmt.Println(i)
 
 		mm := Moves{[]string{"U", "R", "D", "L"}, 0, &startMarker, &g}
