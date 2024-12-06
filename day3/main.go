@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"sort"
 
 	"github.com/gurkslask/AoC2024/common"
 )
@@ -28,24 +29,62 @@ func simple(data []string) int {
 	return result
 }
 func adv(data []string) {
-	dontPattern := `don't\(\)`
-	dontReg := regexp.MustCompile(dontPattern)
-	dontInd := dontReg.FindAllStringIndex(data[0], -1)
-	doPattern := `do\(\)`
-	doReg := regexp.MustCompile(doPattern)
-	doInd := doReg.FindAllStringIndex(data[0], -1)
-	// 1 if do, 0 if dont
-	d := map[int]int{}
-	for _, v := range dontInd {
-		d[v[0]] = 0
+	res := 0
+	for _, row := range data {
+		dontPattern := `don't\(\)`
+		dontReg := regexp.MustCompile(dontPattern)
+		dontInd := dontReg.FindAllStringIndex(row, -1)
+		doPattern := `do\(\)`
+		doReg := regexp.MustCompile(doPattern)
+		doInd := doReg.FindAllStringIndex(row, -1)
+		// 1 if do, 0 if dont
+		d := map[int]int{}
+		for _, v := range dontInd {
+			d[v[0]] = 0
+		}
+		for _, v := range doInd {
+			d[v[0]] = 1
+		}
+		start := 0
+		s := row
+		first := false
+		dodon := false
+		sss := ""
+		sortedKeys := []int{}
+		for k := range d {
+			sortedKeys = append(sortedKeys, k)
+		}
+		sort.Ints(sortedKeys)
+		for k, v := range sortedKeys {
+			//fmt.Printf("Key: %v, Value %v \n", d[v], v)
+			if !first && d[v] == 0 {
+				sss += s[:v]
+				first = true
+			} else if first && dodon && d[v] == 1 && k+1 == len(sortedKeys) {
+				sss += s[start+4:]
+			} else if first && !dodon && d[v] == 1 && start == 0 {
+				start = v
+				//fmt.Printf("key %v, len: %v\n", k, len(sortedKeys))
+				dodon = true
+				if k+1 == len(sortedKeys) {
+					sss += s[start+4:]
+				}
+			} else if first && dodon && d[v] == 0 {
+				dodon = false
+				sss += s[start+4 : v]
+				//fmt.Printf("Start %v, End: %v\n", start, v)
+				start = 0
+			}
+
+		}
+		fmt.Println(sss)
+		res += sumSum(sss)
 	}
-	for _, v := range doInd {
-		d[v[0]] = 1
-	}
-	fmt.Println(d)
-	for _, s := range data[0] {
-		fmt.Printf("%s", s)
-	}
+	fmt.Println(res)
+
+}
+func removeSubstringFromString(s string, start int, end int) string {
+	return s[:start] + s[end+4:]
 
 }
 
