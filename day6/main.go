@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	f := common.ReadFileSlice("day6", false)
+	f := common.ReadFileSlice("day6", true)
 	//simple(f)
 	adv(f)
 
@@ -18,6 +18,14 @@ type Moves struct {
 	Key    int
 	Marker *common.Marker
 	Gridd  *common.Grid
+}
+
+func checkKeys(inmap map[common.Pos]int) int {
+	maxx := 0
+	for _, v := range inmap {
+		maxx = common.MaxInt(maxx, v)
+	}
+	return maxx
 }
 
 func adv(data []string) {
@@ -58,7 +66,7 @@ func adv(data []string) {
 			visited[mm.Marker.GetPos()] += 1
 			//fmt.Println(i)
 			done = mm.Move()
-			howmany += 1
+			howmany = checkKeys(visited)
 			if howmany > 10000 {
 				done = true
 				res += 1
