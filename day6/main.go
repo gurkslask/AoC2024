@@ -7,9 +7,9 @@ import (
 )
 
 func main() {
-	f := common.ReadFileSlice("day6", true)
-	simple(f)
-	//adv(f)
+	f := common.ReadFileSlice("day6", false)
+	//simple(f)
+	adv(f)
 
 }
 
@@ -18,6 +18,54 @@ type Moves struct {
 	Key    int
 	Marker *common.Marker
 	Gridd  *common.Grid
+}
+
+func adv(data []string) {
+	res := 0
+	for i := 0; i < len(data)*len(data[0]); i++ {
+		//fmt.Printf("%v:%v\n", i%len(data), i/len(data))
+		barrelpos := common.Pos{i % len(data), i / len(data)}
+
+		g := common.MakeGrid(len(data), len(data[0]))
+		var startMarker common.Marker
+		for row, v := range data {
+			for col := range v {
+				s := string(data[row][col])
+				if s == "#" {
+					g.AddMarker(common.MakeMarker(row, col, s))
+				} else if s == "^" {
+					startMarker = common.MakeMarker(row, col, s)
+					g.AddMarker(startMarker)
+				} else if row == barrelpos.Row && col == barrelpos.Col {
+					g.AddMarker(common.MakeMarker(row, col, "#"))
+				}
+			}
+
+		}
+
+		g.InitGrid()
+		g.Print()
+		fmt.Println(i)
+
+		mm := Moves{[]string{"U", "R", "D", "L"}, 0, &startMarker, &g}
+		var done bool = false
+		visited := make(map[common.Pos]int)
+		//limit := 60
+		howmany := 0
+		for !done {
+			//fmt.Printf("%v key %v\n", startMarker, mm.Key)
+			//g.Print()
+			visited[mm.Marker.GetPos()] += 1
+			//fmt.Println(i)
+			done = mm.Move()
+			howmany += 1
+			if howmany > 10000 {
+				done = true
+				res += 1
+			}
+		}
+	}
+	fmt.Println(res)
 }
 
 func (m *Moves) Move() bool {
@@ -126,7 +174,4 @@ func simple(data []string) int {
 	fmt.Printf("%v\n", len(visited))
 	g.Print()
 	return 0
-}
-func adv(data []string) {
-	fmt.Printf("%b", data)
 }
