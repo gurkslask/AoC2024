@@ -13,41 +13,8 @@ func main() {
 		ff = append(ff, common.StrToInt(string(s)))
 	}
 	//simple(ff)
-	adv(f)
+	adv(ff)
 
-}
-
-func simple(data []int) {
-	id := 0
-	disk := []int{}
-	for numkey := 0; numkey < len(data); numkey += 2 {
-		num := data[numkey]
-
-		for i := 0; i < num; i++ {
-			disk = append(disk, id)
-		}
-		if numkey < len(data)-1 {
-			freespace := data[numkey+1]
-			for i := 0; i < freespace; i++ {
-				disk = append(disk, -1)
-			}
-		}
-		id += 1
-	}
-
-	for rightmost := len(disk) - 1; rightmost > 1; rightmost-- {
-		if disk[rightmost] != -1 {
-			keytoswitch := checkIfFree(disk)
-			disk[keytoswitch] = disk[rightmost]
-			disk[rightmost] = -1
-			if checkDone(disk) {
-				break
-			}
-		}
-	}
-	fmt.Println(disk)
-
-	fmt.Println(calcChecksum(disk))
 }
 
 func checkIfFree(inslic []int) int {
@@ -79,6 +46,115 @@ func calcChecksum(inslic []int) int {
 	}
 	return res
 }
-func adv(data []string) {
-	fmt.Printf("%b", data)
+func adv(data []int) {
+	id := 0
+	disk := []int{}
+	for numkey := 0; numkey < len(data); numkey += 2 {
+		num := data[numkey]
+
+		for i := 0; i < num; i++ {
+			disk = append(disk, id)
+		}
+		if numkey < len(data)-1 {
+			freespace := data[numkey+1]
+			for i := 0; i < freespace; i++ {
+				disk = append(disk, -1)
+			}
+		}
+		id += 1
+	}
+	//fmt.Println("Njdsndnsakdn")
+	//fmt.Println(disk)
+
+	for rightmost := len(disk) - 1; rightmost > 1; rightmost-- {
+		if disk[rightmost] != -1 {
+			sizeofGrp := checkLenGrp(disk, rightmost)
+			key := checkIfFits(disk, sizeofGrp, rightmost)
+			fmt.Printf("GS: %v, key: %v, right %v, value %v\n", sizeofGrp, key, rightmost, disk[rightmost])
+			if key != 0 {
+				for i := 0; i < sizeofGrp; i++ {
+					//fmt.Println("h")
+					disk[key+i] = disk[rightmost-i]
+					disk[rightmost-i] = -1
+				}
+			}
+			rightmost = rightmost - sizeofGrp + 1
+
+			//fmt.Println(disk)
+		}
+	}
+	fmt.Println(calcChecksum(disk))
+}
+func checkLenGrp(inslic []int, key int) int {
+	res := 0
+	startnum := inslic[key]
+	for i := key; inslic[i] == startnum || i == 0; i-- {
+		res += 1
+		if i <= 0 {
+			break
+		}
+	}
+	return res
+}
+func checkIfFits(inslic []int, size int, startkey int) int {
+	cohesive := false
+	newsize := 0
+	savedkey := 0
+	found := false
+	for key, val := range inslic {
+		if cohesive && val == -1 {
+			newsize += 1
+		} else if val == -1 {
+			cohesive = true
+			savedkey = key
+			newsize += 1
+		} else if val != -1 && key < startkey {
+			//fmt.Printf("Key %v, Val %v, Size %v\n", key, val, newsize)
+			if newsize >= size {
+				found = true
+				break
+			} else {
+				cohesive = false
+				newsize = 0
+				savedkey = 0
+			}
+		}
+	}
+	if found {
+		return savedkey
+	} else {
+		return 0
+	}
+}
+func simple(data []int) {
+	id := 0
+	disk := []int{}
+	for numkey := 0; numkey < len(data); numkey += 2 {
+		num := data[numkey]
+
+		for i := 0; i < num; i++ {
+			disk = append(disk, id)
+		}
+		if numkey < len(data)-1 {
+			freespace := data[numkey+1]
+			for i := 0; i < freespace; i++ {
+				disk = append(disk, -1)
+			}
+		}
+		id += 1
+	}
+	fmt.Println(disk)
+
+	for rightmost := len(disk) - 1; rightmost > 1; rightmost-- {
+		if disk[rightmost] != -1 {
+			keytoswitch := checkIfFree(disk)
+			disk[keytoswitch] = disk[rightmost]
+			disk[rightmost] = -1
+			if checkDone(disk) {
+				break
+			}
+		}
+	}
+
+	fmt.Println(calcChecksum(disk))
 }
